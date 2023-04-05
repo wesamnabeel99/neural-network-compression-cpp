@@ -85,6 +85,13 @@ void loop() {
     output[i] = sigmoid(sum);
   }
 
+  float winningClass = output[0];
+  for (int i = 1; i< N_OUTPUT;i++) {
+    if (output[i] > winningClass) {
+        winningClass= output[i];
+      }
+  }
+
       Serial.println("output!!!");
 
 
