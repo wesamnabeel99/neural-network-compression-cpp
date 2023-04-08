@@ -11,11 +11,12 @@ const int STRIDE = 2;
 const int CONVOLVED_IMAGE_SIZE = IMAGE_SIZE-KERNEL_SIZE+1;
 const int POOL_SIZE = CONVOLVED_IMAGE_SIZE/STRIDE;
 
-int input_image[IMAGE_SIZE][IMAGE_SIZE];
-
+int input_image[N_INPUT];
 float kernel[KERNEL_SIZE][KERNEL_SIZE];
-float convolved_image[CONVOLVED_IMAGE_SIZE][CONVOLVED_IMAGE_SIZE];
+int input_image_square[IMAGE_SIZE][IMAGE_SIZE];
 float pool_output[POOL_SIZE][POOL_SIZE];
+float convolved_image[CONVOLVED_IMAGE_SIZE][CONVOLVED_IMAGE_SIZE];
+
 
 float output_weights[N_INPUT][N_OUTPUT];
 float output[N_OUTPUT];
@@ -29,13 +30,29 @@ double sigmoid(double x) {
 
 void setup() {
   Serial.begin(9600);
+  
+ // Serial.println("setup done  !!");
 
-  Serial.println("setup done  !!");
   
 }
 
 void loop() {
   
+  for (int i=0;i<IMAGE_SIZE;i++) {
+    for (int j=0;j<IMAGE_SIZE;j++)
+      input_image_square[i][j] = input_image[IMAGE_SIZE*i + j];
+  }
+
+  // print the squared image
+  for (int i =0;i<IMAGE_SIZE;i++) {
+    for (int j=0;j<IMAGE_SIZE;j++) {
+      Serial.print(input_image_square[i][j]);
+      Serial.print(" ");
+      }
+      Serial.println("");
+    }
+
+    
   // convolve the input image
     Serial.println("convolution!!!");
   for (int i=0;i<CONVOLVED_IMAGE_SIZE;i++) {
@@ -43,13 +60,14 @@ void loop() {
       float sum = 0;
       for (int k=0;k<KERNEL_SIZE;k++) {
         for (int l=0;l<KERNEL_SIZE;l++) {
-          sum += input_image[i+k][j+l] * kernel[k][l];
+          sum += input_image_square[i+k][j+l] * kernel[k][l];
         }
       }
       convolved_image[i][j] = sum;
       }
   }
   Serial.println("max pooling!");
+
   // implement max pooling
     for (int i = 0; i < CONVOLVED_IMAGE_SIZE; i += STRIDE) {
         for (int j = 0; j < CONVOLVED_IMAGE_SIZE; j += STRIDE) {
@@ -85,16 +103,15 @@ void loop() {
     output[i] = sigmoid(sum);
   }
 
-  float winningClass = output[0];
+  float maximumOutput = output[0];
+  int winningClass = 0;
+  
   for (int i = 1; i< N_OUTPUT;i++) {
-    if (output[i] > winningClass) {
-        winningClass= output[i];
+    if (output[i] > maximumOutput) {
+        maximumOutput= output[i];
+        winningClass = i;
       }
   }
-
       Serial.println("output!!!");
-
-
-
-
+      Serial.println(winningClass);
 }
