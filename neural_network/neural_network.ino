@@ -64,7 +64,23 @@ void loop() {
 }
 
 void classify() {
-  Serial.println("convolution!!!");
+
+  convolve_image();
+  max_pooling();
+  forward_propagation();
+  print_output_vector();
+  
+  int winning_class = find_winning_class();
+  
+  Serial.print("winning class:");
+  Serial.println(winning_class);
+  
+  delay(2000);
+  
+}
+
+void convolve_image() {
+    
   int compressed = 0;
   int nonCompressed = 0;
 
@@ -89,14 +105,12 @@ void classify() {
       }
 
   }
-    
-   
-  Serial.println(F("max pooling!"));
+  
+}
 
-
-  // implement max pooling
-
-    for (int i = 0; i < CONVOLVED_IMAGE_SIZE; i += STRIDE) {
+void max_pooling() {
+  
+      for (int i = 0; i < CONVOLVED_IMAGE_SIZE; i += STRIDE) {
         for (int j = 0; j < CONVOLVED_IMAGE_SIZE; j += STRIDE) {
             int max_val = convolved_image[i][j];
             for (int m = i; m < i + STRIDE; m++) {
@@ -110,6 +124,9 @@ void classify() {
         }
     }
 
+  }
+
+void forward_propagation() {
   // Reshape the 2D array to a 1D array for input to the neural network
   int flattened_input[POOL_SIZE* POOL_SIZE];
   int k = 0;
@@ -128,18 +145,22 @@ void classify() {
       sum += flattened_input[j]/PIXEL_PRECISION * output_weights[j][i]/WEIGHT_PRECISION ;
     }
     output[i] = sigmoid(sum);
-  }
-  
+  }    
+    
+}
 
-
-  //Serial.print("output neurons:");
+void print_output_vector() {
+  Serial.print("output vector: ");
   for (int i=0;i<N_OUTPUT;i++) {
     Serial.print(output[i]);
     Serial.print(" ");
-  }
+  }  
+  Serial.println();
+}
+
+int find_winning_class() {
   
-  Serial.print("\nand we have a winner!! :");
-  float maximumOutput = output[0];
+float maximumOutput = output[0];
   int winningClass = 0;
   
   for (int i = 1; i< N_OUTPUT;i++) {
@@ -148,8 +169,5 @@ void classify() {
         winningClass = i;
       }
   }
-     Serial.println(winningClass);
- 
-        delay(2000);
-  
-  }
+  return winningClass;  
+}
