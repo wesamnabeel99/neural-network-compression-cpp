@@ -59,9 +59,39 @@ float sigmoid(float x) {
 void setup() {
   Serial.begin(9600);
 }
+bool is_image_sent = false;
+int row = 0;
+int column = 0;
+String pixel = "";
 void loop() {
+  while (Serial.available() > 0) {
+    char c = Serial.read();
+    if (c == '\n') {
+      input_image_square[row][column] = pixel.toInt();
+      pixel = "";
+      update_row_column();
+     } else {
+      pixel += c;
+     }
+  }
+  if (is_image_sent) {
     classify();
+  }
 }
+
+void update_row_column() {
+  if (column == 27) {
+    row++;
+    column = 0;
+  } else {
+    column++;  
+  }
+  if (row > 27) {
+    is_image_sent = true;
+  }
+  
+}
+
 
 void classify() {
 
