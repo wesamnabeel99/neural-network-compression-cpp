@@ -1,6 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
-
+#include <LiquidCrystal_I2C.h>
 
 const uint8_t IMAGE_SIZE = 28; 
 const uint8_t N_OUTPUT = 10;      // 10 classes (digits 0-9)
@@ -11,6 +11,12 @@ const uint8_t POOL_SIZE = (CONVOLVED_IMAGE_SIZE-1)/STRIDE + 1;
 const uint8_t N_INPUT = POOL_SIZE * POOL_SIZE;  // input neurouns
 const float WEIGHT_PRECISION = 100000.0;
 const float PIXEL_PRECISION = 1000.0;
+
+const int LCD_COLUMNS = 20;
+const int LCD_ROWS = 4;
+
+LiquidCrystal_I2C lcd(0x27,LCD_COLUMNS, LCD_ROWS);
+
 
 byte input_image_square[IMAGE_SIZE][IMAGE_SIZE] = 
 {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -58,6 +64,19 @@ float sigmoid(float x) {
 
 void setup() {
   Serial.begin(9600);
+
+
+  lcd.init();  
+  lcd.backlight();
+
+  lcd.setCursor (0,1);
+  lcd.print("    Loading..  ");
+  lcd.setCursor (0,2);
+  lcd.print("       :)     ");
+  delay (2000);
+  
+  lcd.clear(); 
+  
 }
 bool is_image_sent = false;
 int row = 0;
