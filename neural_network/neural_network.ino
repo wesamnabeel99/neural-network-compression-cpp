@@ -2,13 +2,16 @@
 #include <stdlib.h>
 #include <LiquidCrystal_I2C.h>
 
+#define DATA_LED 13
+#define SUCCESS_LED 12
+
 const uint8_t IMAGE_SIZE = 28; 
-const uint8_t N_OUTPUT = 10;      // 10 classes (digits 0-9)
+const uint8_t N_OUTPUT = 10;   
 const uint8_t KERNEL_SIZE = 3;
 const uint8_t STRIDE = 2;
 const uint8_t CONVOLVED_IMAGE_SIZE = IMAGE_SIZE-KERNEL_SIZE+1;
 const uint8_t POOL_SIZE = (CONVOLVED_IMAGE_SIZE-1)/STRIDE + 1; 
-const uint8_t N_INPUT = POOL_SIZE * POOL_SIZE;  // input neurouns
+const uint8_t N_INPUT = POOL_SIZE * POOL_SIZE; 
 const float WEIGHT_PRECISION = 100000.0;
 const float PIXEL_PRECISION = 1000.0;
 
@@ -38,16 +41,22 @@ float sigmoid(float x) {
 
 void setup() {
   Serial.begin(9600);
-  pinMode(13,OUTPUT);
+  pinMode(DATA_LED,OUTPUT);
+  pinMode(SUCCESS_LED,OUTPUT);
   Serial.println("test");
   lcd.init();  
   lcd.backlight();
 
   lcd.setCursor (0,1);
-  lcd.print("    Loading..  ");
+  lcd.print("    Waiting For Serial..  ");
   lcd.setCursor (0,2);
   lcd.print("       :)     ");
-  delay (2000);
+  while (!Serial.available()) {
+    digitalWrite(DATA_LED,HIGH);
+    delay(100);
+    digitalWrite(DATA_LED,LOW);
+    delay(100);
+    }
   
   lcd.clear(); 
   
@@ -58,6 +67,7 @@ int column = 0;
 void loop() {
     
      while (Serial.available() > 0) {
+      digitalWrite(DATA_LED,HIGH);
        int pixel = Serial.parseInt();
        if (Serial.read() =='\n') {
         count++;
@@ -68,11 +78,14 @@ void loop() {
         if (count==784) {
           is_image_sent = true;
           count = 0;
+          digitalWrite(DATA_LED,LOW);
+          digitalWrite(SUCCESS_LED,HIGH);
           }
   }
   if (is_image_sent) {
     classify();
     is_image_sent = false;
+    digitalWrite(SUCCESS_LED,LOW);
   }
 }
 
