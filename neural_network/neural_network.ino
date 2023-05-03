@@ -111,15 +111,14 @@ void classify() {
   
   Serial.print("winning class:");
   Serial.println(winning_class);
-  if (winning_class ==7) {
-      digitalWrite(13,HIGH);
-      delay(1000);
-      digitalWrite(13,LOW);
-      delay(1000);
-      digitalWrite(13,HIGH);
-    }
-  delay(2000);
+    
+  lcd.setCursor (0,1);
+  lcd.print("Network Output");
+  lcd.setCursor (0,2);
+  lcd.print(winning_class);
   
+  delay(2000);
+  lcd.clear();
 }
 
 void convolve_image() {
