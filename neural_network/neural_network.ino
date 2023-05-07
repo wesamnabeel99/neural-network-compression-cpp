@@ -24,8 +24,8 @@ const uint8_t N_INPUT = POOL_SIZE * POOL_SIZE;
 const float WEIGHT_PRECISION = 10000.0;
 const float PIXEL_PRECISION = 1000.0;
 
-const int LCD_COLUMNS = 20;
-const int LCD_ROWS = 4;
+const int LCD_COLUMNS = 16;
+const int LCD_ROWS = 2;
 
 int count = 0;
 
@@ -50,7 +50,7 @@ void setup() {
   pinMode(DATA_LED,OUTPUT);
   pinMode(SUCCESS_LED,OUTPUT);
   Serial.println("connected successfully");
-  lcd.begin(16,2);
+  lcd.begin(LCD_COLUMNS,LCD_ROWS);
 
   while (!Serial.available()) {
     lcd.setCursor (0,0);
