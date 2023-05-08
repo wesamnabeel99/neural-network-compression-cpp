@@ -133,14 +133,11 @@ void classify() {
 
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print("Winning Class Is: ");
+    lcd.print("Output: ");
     lcd.setCursor(0,1);
     lcd.print(winning_class);
-    lcd.print("    ");
-    lcd.print(output[winning_class]*100);
-    lcd.print("%");
-
-    delay(2000);
+    lcd.print(" confi:");
+    lcd.print(output[winning_class]);
 }
 
 void convolve_image() {
