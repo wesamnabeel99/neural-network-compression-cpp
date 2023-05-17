@@ -57,11 +57,8 @@ void setup() {
     lcd.print("   Waiting..   ");
     lcd.setCursor (0,1);
     lcd.print("       :)     ");
-  
-    digitalWrite(DATA_LED,HIGH);
-    delay(100);
-    digitalWrite(DATA_LED,LOW);
-    delay(100);
+
+    blink_data_led();
   }
   
   lcd.clear(); 
@@ -73,7 +70,7 @@ int row = 0;
 int column = 0;
 
 void loop() {
-    
+   
    while (Serial.available() > 0) {
       lcd.setCursor(0,0);
       lcd.print("Receiving Pixels..");
@@ -96,7 +93,8 @@ void loop() {
           digitalWrite(DATA_LED,LOW);
           digitalWrite(SUCCESS_LED,HIGH);
           }
-      }
+    }
+
       
       if (is_image_sent) {
           classify();
@@ -132,10 +130,10 @@ void classify() {
 
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print("Output: ");
-    lcd.setCursor(0,1);
+    lcd.print("Winning Class:");
     lcd.print(winning_class);
-    lcd.print(" confi:");
+    lcd.setCursor(0,1);
+    lcd.print("confidence:");
     lcd.print(output[winning_class]);
 }
 
@@ -228,4 +226,12 @@ int find_winning_class() {
       }
   }
   return winningClass;  
+}
+
+void blink_data_led() {
+  
+    digitalWrite(DATA_LED,HIGH);
+    delay(100);
+    digitalWrite(DATA_LED,LOW);
+    delay(100);  
 }
