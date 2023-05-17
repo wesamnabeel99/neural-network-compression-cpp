@@ -101,7 +101,6 @@ void loop() {
       if (is_image_sent) {
           classify();
           is_image_sent = false;
-          digitalWrite(SUCCESS_LED,LOW);
       }
 }
 
